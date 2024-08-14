@@ -1,0 +1,7 @@
+.board {
+  background-color: yellow;
+  width: 200px;
+  height: 200px;
+  display: grid;
+  grid-template: repeat(10, 1fr) / repeat(10, 1fr);
+}
