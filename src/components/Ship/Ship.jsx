@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Ship = ({ _, ship }) => {
+const Ship = ({ _, ship, handleOnDrag }) => {
   const style = {
     backgroundColor: ship.color || 'red',
     width: `${10 * ship.shipLength || 50}px`,
@@ -9,7 +9,14 @@ const Ship = ({ _, ship }) => {
     cursor: 'grab',
   }
 
-  return <div style={style}></div>
+  return (
+    <div
+      style={style}
+      id={ship.id}
+      draggable
+      onDragStart={(e) => handleOnDrag(e)}
+    ></div>
+  )
 }
 
 export default Ship

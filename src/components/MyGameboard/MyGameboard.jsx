@@ -14,6 +14,8 @@ const MyGameboard = forwardRef((props, ref) => {
           <MyField
             key={`cell_${rowIndex}_${columnIndex}`}
             id={`cell_${rowIndex}_${columnIndex}`}
+            handleOnDrop={props.handleOnDrop}
+            handleDragOver={props.handleDragOver}
           ></MyField>
         ))
       })}
