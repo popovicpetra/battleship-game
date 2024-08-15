@@ -1,0 +1,9 @@
+.shipsOptions {
+  height: 60px;
+  width: 300px;
+  margin: 20px 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid black;
+}
