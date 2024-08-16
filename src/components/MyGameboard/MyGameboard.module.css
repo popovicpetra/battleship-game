@@ -1,5 +1,6 @@
 .board {
-  background-color: blue;
+  background-color: white;
+  border: 1px solid black;
   width: 200px;
   height: 200px;
   display: grid;

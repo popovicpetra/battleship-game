@@ -1,28 +1,33 @@
-import React from 'react'
-import styles from './ShipsOptions.module.css'
-import { useState, useRef } from 'react'
+import React from 'react';
+import styles from './ShipsOptions.module.css';
+import { useState, useRef } from 'react';
 
-import Ship from '../Ship/Ship'
-import Button from '../Button/Button'
+import Ship from '../Ship/Ship';
+import Button from '../Button/Button';
 
-const ShipsOptions = ({ isHorizontal, availableShips, handleOnDrag }) => {
-  const [angle, setAngle] = useState(0)
-  const shipsRef = useRef(null)
+const ShipsOptions = ({
+  isHorizontal,
+  setIsHorizontal,
+  availableShips,
+  handleOnDrag,
+}) => {
+  const [angle, setAngle] = useState(0);
+  const shipsRef = useRef(null);
 
   const flipShips = () => {
-    const optionShips = Array.from(shipsRef.current.children)
+    const optionShips = Array.from(shipsRef.current.children);
 
-    const nextAngle = angle === 0 ? 90 : 0
-    setAngle(nextAngle)
-    isHorizontal = !isHorizontal
+    const nextAngle = angle === 0 ? 90 : 0;
+    setAngle(nextAngle);
+    setIsHorizontal(!isHorizontal);
 
     optionShips.forEach(
       (optionShip) => (optionShip.style.transform = `rotate(${nextAngle}deg)`)
-    )
-  }
+    );
+  };
 
   return (
-    <>
+    <div className={styles.containerForOptions}>
       <div className={styles.shipsOptions} ref={shipsRef}>
         {availableShips.map((ship) => (
           <Ship
@@ -34,8 +39,8 @@ const ShipsOptions = ({ isHorizontal, availableShips, handleOnDrag }) => {
         ))}
       </div>
       <Button text={'FLIP'} fun={flipShips}></Button>
-    </>
-  )
-}
+    </div>
+  );
+};
 
-export default ShipsOptions
+export default ShipsOptions;

@@ -1,3 +1,11 @@
+.containerForOptions {
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 .shipsOptions {
   height: 60px;
   width: 300px;

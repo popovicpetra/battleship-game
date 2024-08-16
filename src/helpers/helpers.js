@@ -4,21 +4,27 @@ export const hasEnoughBlocksToDeploy = (
   rowIndex,
   columnIndex
 ) => {
-  return isHorizontal
-    ? Number(shipLength) + Number(rowIndex) > 10
-      ? false
-      : true
-    : Number(shipLength) + Number(columnIndex) > 10
-    ? false
-    : true
-}
+  if (isHorizontal) {
+    if (Number(shipLength) + Number(columnIndex) > 10) {
+      return false;
+    } else {
+      return true;
+    }
+  } else {
+    if (Number(shipLength) + Number(rowIndex) > 10) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+};
 
 export const isBlockFree = (myBoard, rowIndex, columnIndex) => {
-  console.log('leeej')
-  console.log(myBoard)
-  if (myBoard[rowIndex][columnIndex] != null) return false
-  else return true
-}
+  console.log('leeej');
+  console.log(myBoard);
+  if (myBoard[rowIndex][columnIndex] != null) return false;
+  else return true;
+};
 
 export const areBlocksFree = (
   myBoard,
@@ -29,19 +35,19 @@ export const areBlocksFree = (
 ) => {
   if (isHorizontal) {
     for (let i = 0; i < Number(shipLength); i++) {
-      const newColumn = Number(columnIndex) + Number(i)
+      const newColumn = Number(columnIndex) + Number(i);
       if (!isBlockFree(myBoard, Number(rowIndex), newColumn)) {
-        return false
+        return false;
       }
     }
   } else {
     for (let i = 0; i < Number(shipLength); i++) {
-      const newRow = Number(rowIndex) + Number(i)
+      const newRow = Number(rowIndex) + Number(i);
       if (!isBlockFree(myBoard, newRow, Number(columnIndex))) {
-        return false
+        return false;
       }
     }
   }
 
-  return true
-}
+  return true;
+};

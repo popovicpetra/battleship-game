@@ -1,26 +1,24 @@
-import React from 'react'
-import styles from './MyGameboard.module.css'
-import { useState, useRef, forwardRef } from 'react'
+import React from 'react';
+import styles from './MyGameboard.module.css';
 
-import MyField from '../MyField/MyField'
+import MyField from '../MyField/MyField';
 
-const MyGameboard = forwardRef((props, ref) => {
-  const [currentlyPlacing, setCurrentlyPlacing] = useState('ce vidimo')
-
+const MyGameboard = (props) => {
   return (
-    <div className={styles.board} ref={ref}>
-      {props.myBoard.map((row, columnIndex) => {
-        return row.map((_, rowIndex) => (
+    <div className={styles.board}>
+      {props.myBoard.map((row, rowIndex) => {
+        return row.map((_, columnIndex) => (
           <MyField
             key={`cell_${rowIndex}_${columnIndex}`}
             id={`cell_${rowIndex}_${columnIndex}`}
+            ship={props.myBoard[rowIndex][columnIndex]}
             handleOnDrop={props.handleOnDrop}
             handleDragOver={props.handleDragOver}
           ></MyField>
-        ))
+        ));
       })}
     </div>
-  )
-})
+  );
+};
 
-export default MyGameboard
+export default MyGameboard;

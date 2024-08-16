@@ -1,80 +1,81 @@
-import React from 'react'
-import styles from './GamePage.module.css'
-import { useState, useRef } from 'react'
+import React from 'react';
+import styles from './GamePage.module.css';
+import { useState, useRef } from 'react';
 
-import { hasEnoughBlocksToDeploy, areBlocksFree } from '../../helpers/helpers'
+import { hasEnoughBlocksToDeploy, areBlocksFree } from '../../helpers/helpers';
 
-import { SHIPS } from '../../utils/DB'
-import MyGameboard from '../../components/MyGameboard/MyGameboard'
-import EnemyGameboard from '../../components/EnemyGameboard/EnemyGameboard'
-import ShipsOptions from '../../components/ShipsOptions/ShipsOptions'
+import { SHIPS } from '../../utils/DB';
+import MyGameboard from '../../components/MyGameboard/MyGameboard';
+import EnemyGameboard from '../../components/EnemyGameboard/EnemyGameboard';
+import ShipsOptions from '../../components/ShipsOptions/ShipsOptions';
 
 const GamePage = () => {
-  const defaultMyBoard = Array(10).fill(Array(10).fill(null)) //array of 10 items, every nested array has 10 items in it (10x10 board)
-  const defaultEnemyBoard = Array(10).fill(Array(10).fill(null))
+  const defaultMyBoard = Array.from({ length: 10 }, () => Array(10).fill(null)); //array of 10 items, every nested array has 10 items in it (10x10 board)
+  const defaultEnemyBoard = Array.from({ length: 10 }, () =>
+    Array(10).fill(null)
+  );
 
-  const [hasGameStarted, setHasGameStarted] = useState(false) //has game started or player is preparing his board; false => preparing
-  const [myBoard, setMyBoard] = useState(defaultMyBoard)
-  const [enemyBoard, setEnemyBoard] = useState(defaultEnemyBoard)
+  const [hasGameStarted, setHasGameStarted] = useState(false); //has game started or player is preparing his board; false => preparing
+  const [myBoard, setMyBoard] = useState(defaultMyBoard); //field has null value => free
+  const [enemyBoard, setEnemyBoard] = useState(defaultEnemyBoard);
 
-  const [availableShips, setAvailableShips] = useState(SHIPS)
-  let isHorizontal = true
-  const [draggedShip, setDraggedShip] = useState(null)
+  const [availableShips, setAvailableShips] = useState(SHIPS); //ships that renders in ShipsOption container
+  const [isHorizontal, setIsHorizontal] = useState(true); //axis
 
-  const myBoardRef = useRef(null)
+  const [draggedShip, setDraggedShip] = useState(null); //currently dragged
 
+  //Drag and drop functionality =>
   const handleOnDrag = (e) => {
-    setDraggedShip(e.target)
-  }
+    setDraggedShip(e.target);
+  };
 
   const handleDragOver = (e) => {
-    e.preventDefault()
-  }
+    e.preventDefault();
+  };
 
   const handleOnDrop = (e) => {
-    const startBlockId = e.target.id
-    const ship = draggedShip.id
-    let shipLength = availableShips.filter((ship) => {
-      return ship.id != draggedShip.id
-    }).length
+    const startBlockId = e.target.id;
+    const ship = draggedShip.id;
+    let shipLength = availableShips.find((ship) => {
+      return ship.id === draggedShip.id;
+    }).shipLength;
 
-    addShipToTheBoard(ship, shipLength, startBlockId)
-
-    setAvailableShips(
-      availableShips.filter((ship) => {
-        return ship.id != draggedShip.id
-      })
-    )
-  }
+    console.log(myBoard);
+    if (addShipToTheBoard(ship, shipLength, startBlockId))
+      setAvailableShips(
+        availableShips.filter((ship) => {
+          return ship.id != draggedShip.id;
+        })
+      );
+    else console.log('The ship is not deployed');
+  };
 
   const addShipToTheBoard = (ship, shipLength, startBlockId) => {
-    let [_, rowNum, columnNum] = startBlockId.split('_') //cell_0_0
-    rowNum = Number(rowNum)
-    columnNum = Number(columnNum)
-    const newBoard = [...myBoard]
+    let [_, rowNum, columnNum] = startBlockId.split('_');
+    rowNum = Number(rowNum);
+    columnNum = Number(columnNum);
+    const newBoard = [...myBoard];
 
     if (
+      //functions from helpers.js
       hasEnoughBlocksToDeploy(isHorizontal, shipLength, rowNum, columnNum) &&
       areBlocksFree(myBoard, isHorizontal, shipLength, rowNum, columnNum)
     ) {
-      console.log(newBoard)
-      console.log('yeye')
       for (let i = 0; i < shipLength; i++) {
-        //console.log(rowNum)
-        //console.log(columnNum)
         if (isHorizontal) {
-          newBoard[rowNum][columnNum + i] = ship
+          newBoard[rowNum][columnNum + i] = ship;
         } else {
-          newBoard[rowNum + i][columnNum] = ship
+          newBoard[rowNum + i][columnNum] = ship;
         }
       }
     } else {
-      console.log('nene')
+      return false;
     }
 
-    console.log(newBoard)
-    setMyBoard(newBoard)
-  }
+    setMyBoard(newBoard);
+    return true;
+  };
+  //<=
 
   return (
     <>
@@ -91,7 +92,6 @@ const GamePage = () => {
         <MyGameboard
           handleDragOver={handleDragOver}
           handleOnDrop={handleOnDrop}
-          ref={myBoardRef}
           myBoard={myBoard}
           setMyBoard={setMyBoard}
           hasGameStarted={hasGameStarted}
@@ -103,11 +103,12 @@ const GamePage = () => {
       </div>
       <ShipsOptions
         isHorizontal={isHorizontal}
+        setIsHorizontal={setIsHorizontal}
         availableShips={availableShips}
         handleOnDrag={handleOnDrag}
       ></ShipsOptions>
     </>
-  )
-}
+  );
+};
 
-export default GamePage
+export default GamePage;
