@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styles from './GamePage.module.css';
 import { useState, useRef } from 'react';
 
@@ -23,6 +23,10 @@ const GamePage = () => {
   const [isHorizontal, setIsHorizontal] = useState(true); //axis
 
   const [draggedShip, setDraggedShip] = useState(null); //currently dragged
+
+  useEffect(() => {
+    if (availableShips.length == 0) setHasGameStarted(true);
+  }, [availableShips]);
 
   //Drag and drop functionality =>
   const handleOnDrag = (e) => {
@@ -88,25 +92,31 @@ const GamePage = () => {
         </p>
       </div>
 
-      <div className={styles.boardsContainer}>
-        <MyGameboard
-          handleDragOver={handleDragOver}
-          handleOnDrop={handleOnDrop}
-          myBoard={myBoard}
-          setMyBoard={setMyBoard}
-          hasGameStarted={hasGameStarted}
-        ></MyGameboard>
-        <EnemyGameboard
-          enemyBoard={enemyBoard}
-          hasGameStarted={hasGameStarted}
-        ></EnemyGameboard>
+      <div className={styles.allBoardsContainer}>
+        <div className={styles.boardContainer}>
+          <MyGameboard
+            handleDragOver={handleDragOver}
+            handleOnDrop={handleOnDrop}
+            myBoard={myBoard}
+            setMyBoard={setMyBoard}
+            hasGameStarted={hasGameStarted}
+          ></MyGameboard>
+          {hasGameStarted || (
+            <ShipsOptions
+              isHorizontal={isHorizontal}
+              setIsHorizontal={setIsHorizontal}
+              availableShips={availableShips}
+              handleOnDrag={handleOnDrag}
+            ></ShipsOptions>
+          )}
+        </div>
+        <div className={styles.boardContainer}>
+          <EnemyGameboard
+            enemyBoard={enemyBoard}
+            hasGameStarted={hasGameStarted}
+          ></EnemyGameboard>
+        </div>
       </div>
-      <ShipsOptions
-        isHorizontal={isHorizontal}
-        setIsHorizontal={setIsHorizontal}
-        availableShips={availableShips}
-        handleOnDrag={handleOnDrag}
-      ></ShipsOptions>
     </>
   );
 };

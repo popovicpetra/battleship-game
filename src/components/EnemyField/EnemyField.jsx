@@ -1,7 +1,7 @@
-import React from 'react'
+import React from 'react';
 
-const EnemyField = () => {
-  return <div></div>
-}
+const EnemyField = ({ id }) => {
+  return <div id={id}></div>;
+};
 
-export default EnemyField
+export default EnemyField;
