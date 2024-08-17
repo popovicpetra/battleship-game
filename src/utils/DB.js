@@ -29,4 +29,4 @@ export const SHIPS = [
     shipLength: 5,
     color: 'orange',
   },
-]
+];

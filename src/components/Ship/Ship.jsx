@@ -1,13 +1,14 @@
-import React from 'react'
+import React from 'react';
 
 const Ship = ({ _, ship, handleOnDrag }) => {
   const style = {
     backgroundColor: ship.color || 'red',
-    width: `${10 * ship.shipLength || 50}px`,
-    height: '10px',
+    width: `${20 * ship.shipLength || 50}px`,
+    height: '20px',
     margin: '3px',
     cursor: 'grab',
-  }
+    border: '1px outset ' + ship.color,
+  };
 
   return (
     <div
@@ -16,7 +17,7 @@ const Ship = ({ _, ship, handleOnDrag }) => {
       draggable
       onDragStart={(e) => handleOnDrag(e)}
     ></div>
-  )
-}
+  );
+};
 
-export default Ship
+export default Ship;
