@@ -4,10 +4,13 @@ import {
   createRoutesFromElements,
   RouterProvider,
 } from 'react-router-dom'
-
+import { useEffect } from 'react';
 import GamePage from './pages/GamePage/GamePage'
 
+
 function App() {
+ 
+
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route index element={<GamePage></GamePage>}></Route>

@@ -1,13 +1,8 @@
-.allBoardsContainer {
+.container {
   display: flex;
+  gap: 60px;
 }
 
-.boardContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 600px;
-}
 .conn {
   display: inline-block;
   width: 1rem;
