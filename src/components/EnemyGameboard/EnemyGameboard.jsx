@@ -11,6 +11,7 @@ const EnemyGameboard = (props) => {
           <EnemyField
             key={`cell_${rowIndex}_${columnIndex}`}
             id={`cell_${rowIndex}_${columnIndex}`}
+            onClick={(e) => props.handleFieldClick(e)}
           ></EnemyField>
         ));
       })}

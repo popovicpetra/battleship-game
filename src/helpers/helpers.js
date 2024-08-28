@@ -20,8 +20,8 @@ export const hasEnoughBlocksToDeploy = (
 };
 
 export const isBlockFree = (myBoard, rowIndex, columnIndex) => {
-  console.log('leeej');
-  console.log(myBoard);
+ // console.log('leeej');
+  //console.log(myBoard);
   if (myBoard[rowIndex][columnIndex] != null) return false;
   else return true;
 };
@@ -51,3 +51,17 @@ export const areBlocksFree = (
 
   return true;
 };
+
+export const doesFieldHaveShip = (myBoard, rowIndex, columnIndex) => {
+  if(rowIndex<0||rowIndex>myBoard.length||columnIndex<0||columnIndex>myBoard[rowIndex].length)
+    return false;
+  if(myBoard[rowIndex][columnIndex]!=null)
+    
+    return true;
+  return false;
+};
+
+export const countOccurrences = (array, item) => {
+  return array.filter(element => element === item).length;
+};
+
