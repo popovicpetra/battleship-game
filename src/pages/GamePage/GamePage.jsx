@@ -14,7 +14,7 @@ import PlayersInfo from '../../components/PlayersInfo/PlayersInfo';
 const socket = io('http://localhost:5000'); 
 
 const GamePage = () => {
-  
+ 
   const defaultMyBoard = Array.from({ length: 10 }, () => Array(10).fill(null)); //array of 10 items, every nested array has 10 items in it (10x10 board)
   const defaultEnemyBoard = Array.from({ length: 10 }, () =>
     Array(10).fill(null)
@@ -72,11 +72,16 @@ const GamePage = () => {
       }
       
     })
-     socket.on('fire-reply',hits=>{
-      setProba(hits)
-     })
+    
   },[])
-  
+  const waitForProbaUpdate = () => {
+    return new Promise((resolve) => {
+      socket.on('fire-reply', (hits) => {
+        setProba(hits);
+        resolve(hits); // Resolving the promise with the hits value
+      });
+    });
+  };
 
    useEffect(() => {
      if (availableShips.length == 0) {
@@ -141,7 +146,7 @@ const GamePage = () => {
 
    //Click field functionality =>
 
-    const handleFieldClick = (e) => {
+    const handleFieldClick = async (e) => {
        if(availableShips.length!==0){
         setMessage("Prvo postavite sve brodove!");
         return;
@@ -169,45 +174,47 @@ const GamePage = () => {
       let color = "";
       //console.log(proba)
       //doesFieldHaveShip(enemyBoard,rowIndex,columnIndex)
-    
-       if(proba){
-         const shipId = enemyBoard[rowIndex][columnIndex];
+      const hits = await waitForProbaUpdate();
+      if(hits){
+        const shipId = enemyBoard[rowIndex][columnIndex];
 
-        setHitShips(prevHitShips => {
-         const updatedHitShips = [...prevHitShips, shipId];
-           const ship = SHIPS.find(ship => ship.id === shipId);
-          const s = ship ? ship.shipLength : 0;
-  
-           if (countOccurrences(updatedHitShips, shipId) === s) {
-             setMessage(`Congratulations! You hit the ship! ${shipId} is down!`);
-             setSinkedShips(prevSinkedShips => {
-               const updatedSinkedShips = [...prevSinkedShips, shipId];
+       setHitShips(prevHitShips => {
+        const updatedHitShips = [...prevHitShips, shipId];
+          const ship = SHIPS.find(ship => ship.id === shipId);
+         const s = ship ? ship.shipLength : 0;
+ 
+          if (countOccurrences(updatedHitShips, shipId) === s) {
+            setMessage(`Congratulations! You hit the ship! ${shipId} is down!`);
+            setSinkedShips(prevSinkedShips => {
+              const updatedSinkedShips = [...prevSinkedShips, shipId];
 
-               // Check if all ships are sunk
-              
-               return updatedSinkedShips;
-             });
-            
-          return updatedHitShips.filter(ship => ship !== shipId);
-           }
-  
-           return updatedHitShips;
-         });
+              // Check if all ships are sunk
+             
+              return updatedSinkedShips;
+            });
+           
+         return updatedHitShips.filter(ship => ship !== shipId);
+          }
+ 
+          return updatedHitShips;
+        });
 
-         console.log(hitShips);
-         console.log(sinkedShips);
-         color="green";
-         setMessage("Congratulations! You hit the ship!")
-        
-       }
-       else{
-         color = "red";
-         setMessage("Sorry, you missed.");
-       }
-      e.target.style.background = color;
+        console.log(hitShips);
+        console.log(sinkedShips);
+        color="green";
+        setMessage("Congratulations! You hit the ship!")
+       
+      }
+      else{
+        color = "red";
+        setMessage("Sorry, you missed.");
+      }
+     e.target.style.background = color;
 
-      const newBoard = [...enemyBoard];
-      setEnemyBoard(newBoard);
+   
+      
+     const newBoard = [...enemyBoard];
+     setEnemyBoard(newBoard); 
     };
 
 //<=
