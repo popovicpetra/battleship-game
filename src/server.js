@@ -21,9 +21,11 @@ server.listen(5000, () => {
   console.log('Server listening on port 5000');
 });
 
+const rooms = {};
 let players=[null,null];
 let playersReady=[false,false]
 io.on('connection', (socket) => {
+  
   let count=-1;
   for(let i=0;i<=1;i++){
     if(players[i]==null){
@@ -32,8 +34,15 @@ io.on('connection', (socket) => {
       break;
     }
   }
+
+  
   if(count==-1){
     return;
+  }
+
+  if(count==1){
+    socket.emit('turn', false);
+    socket.broadcast.emit('turn',true)
   }
 
   socket.on('disconnect',()=>{
