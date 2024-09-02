@@ -5,7 +5,10 @@ const MyField = ({ id, ship, handleDragOver, handleOnDrop }) => {
   let color = 'white';
   let border = '0.1px solid black';
   if (ship) {
-    color = SHIPS.find((obj) => obj.id === ship).color;
+    if(ship==='hit')
+      color='green'
+    else
+      color = SHIPS.find((obj) => obj.id === ship).color; 
     border = '0.1px outset ' + color;
   }
   const style = {
