@@ -22,60 +22,88 @@ server.listen(5000, () => {
 });
 
 const rooms = {};
-let players=[null,null];
-let playersReady=[false,false]
+
+// let players=[null,null];
+// let playersReady=[false,false]
 io.on('connection', (socket) => {
-  
-  let count=-1;
-  for(let i=0;i<=1;i++){
-    if(players[i]==null){
-      count=i;
-      players[i]=i;
-      break;
-    }
-  }
-
-  
-  if(count==-1){
-    return;
-  }
-
-  if(count==1){
-    socket.emit('turn', false);
-    socket.broadcast.emit('turn',true)
-  }
-
-  socket.on('disconnect',()=>{
-    players[count]=null;
-    playersReady[count]=false;
-  })
-  
-  socket.on('check-players',()=>{
-    let connections=[false,false];
-    for(let i =0; i<2;i++){
-      if(players[i]!==null){
-        connections[i]=true;
+    let victory= false;
+  socket.on('join-room',roomName=>{
+    console.log('Client joining room:', roomName);
+      if(!(roomName in rooms)){
+        rooms[roomName] = { players: [socket.id], playersReady: [false, false] };
+        socket.data.roomName = roomName;
+        socket.join(roomName);
+      }else if (rooms[roomName].players.length === 1) {
+        rooms[roomName].players.push(socket.id);
+        socket.data.roomName = roomName;
+        socket.join(roomName);
+      }else if(rooms[roomName].players.length === 2){
+        socket.emit('room-full');
       }
+      console.log(rooms)
+
+      let connections=[false,false]
+      if(rooms[roomName].players.length === 1){
+        connections=[true,false];
+      }else if(rooms[roomName].players.length === 2){
+        connections=[true,true]; 
+      }
+      io.to(roomName).emit('check-players-reply',connections);
+
+      if(rooms[roomName].players.length === 2){
+        const player1Id = rooms[roomName].players[0];
+        const player2Id = rooms[roomName].players[1];
+
+        io.to(player1Id).emit('turn', true);
+        io.to(player2Id).emit('turn', false);
+      }
+    })
+
+  
+
+    socket.on('disconnect',()=>{
+      const roomName = socket.data.roomName;
+       if (victory) {
+      // Ako je već emitovana pobeda, ne emituje 'end'
+      console.log(`Pobeda već emitovana u sobi ${roomName}.`);
+      return;
     }
-    io.sockets.emit('check-players-reply',connections)
-   //console.log(connections)
-  })
+      io.to(roomName).emit('end');
+     // io.socketsLeave(roomName);
+      io.in(roomName).disconnectSockets(true);
+      delete rooms[roomName];
+      console.log(rooms);
+    })
+  
 
-  socket.on('ready',()=>{
+  socket.on('ready',(roomName)=>{
+    const room = rooms[roomName];
+    const playerIndex = room.players.indexOf(socket.id);
     
-    playersReady[count]=true;
-    
-    io.sockets.emit('ready-reply',playersReady)
-    console.log(playersReady);
+    if (playerIndex !== -1) { //za svaki slucaj
+      room.playersReady[playerIndex] = true;
+      io.to(roomName).emit('ready-reply', room.playersReady);
+  
+    }
   })
 
-  socket.on('fire', fieldId=>{
-    socket.broadcast.emit('fire',fieldId)
+  socket.on('fire', (fieldId, roomName)=>{
+   
+    socket.to(roomName).emit('fire', fieldId);
   })
 
-  socket.on('fire-reply', hit=>{
-    console.log(hit)
-    socket.broadcast.emit('fire-reply', hit)
+  socket.on('fire-reply', (hit, roomName)=>{
+   
+    socket.to(roomName).emit('fire-reply', hit);
+  })
+
+  socket.on('victory',roomName=>{
+    victory= true;
+    socket.to(roomName).emit('victory');
+    //io.socketsLeave(roomName);
+    io.in(roomName).disconnectSockets(true);
+    delete rooms[roomName];
+    console.log(rooms)
   })
   
 });

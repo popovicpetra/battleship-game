@@ -4,20 +4,19 @@ import styles from './PlayersInfo.module.css'
 import Button from '../Button/Button';
 
 
-const PlayersInfo = ({socket, allShipsPlaced}) =>{
+const PlayersInfo = ({socket, allShipsPlaced,roomName}) =>{
   
   const [connections,setConnections]=useState([false,false])
   const [playersReady,setPlayersReady]= useState([false,false])
   const [message,setMessage]= useState("")
   
   useEffect(()=>{
-
-    socket.emit('check-players')
+    
+   
     socket.on('check-players-reply', (conn)=>{
 
       setConnections(conn);
       console.log(connections[0] + ' ' + connections[1])
-      console.log(conn)
       
     })
 
@@ -31,7 +30,7 @@ const PlayersInfo = ({socket, allShipsPlaced}) =>{
       socket.off('check-players-reply')
       socket.off('ready-reply')
     }
-  },[])
+  },[roomName])
     
   const ready = ()=>{
 
@@ -40,7 +39,7 @@ const PlayersInfo = ({socket, allShipsPlaced}) =>{
       return;
     }
     setMessage("");
-    socket.emit('ready')
+    socket.emit('ready', roomName)
   }
 
   

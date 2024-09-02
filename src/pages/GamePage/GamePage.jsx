@@ -16,6 +16,7 @@ const socket = io('http://localhost:5000');
 
 const GamePage = () => {
   const [roomName, setRoomName] = useState('');
+  const [block, setBlock]=useState(false)
   const defaultMyBoard = Array.from({ length: 10 }, () => Array(10).fill(null)); //array of 10 items, every nested array has 10 items in it (10x10 board)
   const defaultEnemyBoard = Array.from({ length: 10 }, () =>
     Array(10).fill(null)
@@ -42,6 +43,9 @@ const GamePage = () => {
  
 
   useEffect(()=>{
+    socket.on('room-full',()=>{
+      setMessage("Ova soba je puna, ne mozete joj se pridruziti.")
+    });
     
     socket.on('connect', () => {
       console.log('Connected to server');
@@ -61,22 +65,44 @@ const GamePage = () => {
       setPlayers(true)
     })
 
-    socket.on('fire',fieldId=>{
-      let [_, fireRow,fireCol]= fieldId.split('_');
-      fireRow = Number(fireRow);
-      fireCol = Number(fireCol);
-      if(doesFieldHaveShip(myBoard,fireRow,fireCol)){
-        socket.emit('fire-reply', myBoard[fireRow][fireCol]);
-      }else{
-        socket.emit('fire-reply', myBoard[fireRow][fireCol]);
-      }
-      setTurn(!turn);
-    })
+   
+      socket.on('fire',fieldId=>{
+        let [_, fireRow,fireCol]= fieldId.split('_');
+        fireRow = Number(fireRow);
+        fireCol = Number(fireCol);
+        socket.emit('fire-reply', myBoard[fireRow][fireCol],roomName);
+        myBoard[fireRow][fireCol]='hit';
+        const newBoard = [...myBoard];
+        setMyBoard(newBoard); 
+        setTurn(!turn);
+      })
+  
     
-  },[])
+    socket.on('end',()=>{
+      if (message !== "Nazalost, izgubili ste. Vise srece drugi put!") {
+        setMessage('Jedan od igraca je napustio igru. Igra je gotova.');
+      }
+      setBlock(true);
+    })
+
+    socket.on('victory',()=>{
+      setMessage("Nazalost, izgubili ste. Vise srece drugi put!");
+      setBlock(true);
+    })
+
+    return () => {
+      socket.off('connect');
+      socket.off('turn');
+      socket.off('ready-reply');
+      socket.off('fire');
+      socket.off('end');
+  };
+  }, [roomName])
   
   const joinRoom = () => {
+    //setRoomName(roomName)
     socket.emit('join-room', roomName);
+    
   };
   
   const waitForProbaUpdate = () => {
@@ -97,14 +123,23 @@ const GamePage = () => {
 
   //Drag and drop functionality =>
   const handleOnDrag = (e) => {
+    if(block){
+      return;
+    }
     setDraggedShip(e.target);
   };
 
   const handleDragOver = (e) => {
+    if(block){
+      return;
+    }
     e.preventDefault();
   };
 
   const handleOnDrop = (e) => {
+    if(block){
+      return;
+    }
     const startBlockId = e.target.id;
     const ship = draggedShip.id;
     let shipLength = availableShips.find((ship) => {
@@ -152,6 +187,9 @@ const GamePage = () => {
    //Click field functionality =>
 
     const handleFieldClick = async (e) => {
+      if(block){
+        return; //kad se diskonektuje ne moze da radi nista
+      }
       if(availableShips.length!==0){
        setMessage("Prvo postavite sve brodove!");
        return;
@@ -179,7 +217,8 @@ const GamePage = () => {
      rowIndex = Number(rowIndex);
      columnIndex = Number(columnIndex);
      
-     socket.emit('fire', fieldId);
+     socket.emit('fire', fieldId, roomName);
+
      setTurn(!turn);
 
      let color = "";
@@ -200,6 +239,8 @@ const GamePage = () => {
          //check if all ships are sinked
          if(hitShips.length===16){
            setMessage('POBEDILI STE');
+          socket.emit('victory',roomName)
+          setBlock(true);
            //sends message to other player
            //mozda promena u zeleno
            //prekid igrice
@@ -240,7 +281,7 @@ const GamePage = () => {
         <p>
           Message: {message}
         </p>
-        <PlayersInfo socket={socket} allShipsPlaced={hasGameStarted} />  
+        <PlayersInfo socket={socket} allShipsPlaced={hasGameStarted} roomName={roomName} />  
         
      
       </div>
