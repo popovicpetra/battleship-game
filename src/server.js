@@ -23,10 +23,9 @@ server.listen(5000, () => {
 
 const rooms = {};
 
-// let players=[null,null];
-// let playersReady=[false,false]
 io.on('connection', (socket) => {
-    let victory= false;
+  let victory= false;
+  let start = false;
   socket.on('join-room',roomName=>{
     console.log('Client joining room:', roomName);
       if(!(roomName in rooms)){
@@ -40,7 +39,9 @@ io.on('connection', (socket) => {
       }else if(rooms[roomName].players.length === 2){
         socket.emit('room-full');
       }
-      console.log(rooms)
+      console.log(rooms);
+
+      start= true;
 
       let connections=[false,false]
       if(rooms[roomName].players.length === 1){
@@ -67,8 +68,8 @@ io.on('connection', (socket) => {
       // Ako je već emitovana pobeda, ne emituje 'end'
       console.log(`Pobeda već emitovana u sobi ${roomName}.`);
       return;
-    }
-      io.to(roomName).emit('end');
+      }
+      //io.to(roomName).emit('end');
      // io.socketsLeave(roomName);
       io.in(roomName).disconnectSockets(true);
       delete rooms[roomName];
@@ -77,18 +78,20 @@ io.on('connection', (socket) => {
   
 
   socket.on('ready',(roomName)=>{
+     if(!start || rooms[roomName].players.length !== 2){
+       socket.emit('not-ready');
+       return;
+     }
     const room = rooms[roomName];
     const playerIndex = room.players.indexOf(socket.id);
     
     if (playerIndex !== -1) { //za svaki slucaj
       room.playersReady[playerIndex] = true;
       io.to(roomName).emit('ready-reply', room.playersReady);
-  
     }
   })
 
   socket.on('fire', (fieldId, roomName)=>{
-   
     socket.to(roomName).emit('fire', fieldId);
   })
 
@@ -107,6 +110,11 @@ io.on('connection', (socket) => {
   })
   
 });
+
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+});
+
 
 
 

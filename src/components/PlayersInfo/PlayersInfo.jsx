@@ -14,10 +14,9 @@ const PlayersInfo = ({socket, allShipsPlaced,roomName}) =>{
     
    
     socket.on('check-players-reply', (conn)=>{
-
       setConnections(conn);
       console.log(connections[0] + ' ' + connections[1])
-      
+
     })
 
     socket.on('ready-reply', players =>{

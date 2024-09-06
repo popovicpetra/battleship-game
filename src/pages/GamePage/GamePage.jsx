@@ -23,9 +23,7 @@ const GamePage = () => {
   );
 
   const [players,setPlayers]=useState(false)
-  //const [hit,setHit]= useState(false)
-  const [proba,setProba] = useState(null)
-  const[turn,setTurn]=useState();
+  const [turn,setTurn]=useState();
 
   const [hasGameStarted, setHasGameStarted] = useState(false); //has game started or player is preparing his board; false => preparing
   const [myBoard, setMyBoard] = useState(defaultMyBoard); //field has null value => free
@@ -38,7 +36,7 @@ const GamePage = () => {
 
   const [hitFields, setHitFields] = useState([]);
   const [hitShips, setHitShips] = useState([]);
-  const [sinkedShips, setSinkedShips] = useState([]);
+ 
   const [message, setMessage] = useState("");
  
 
@@ -65,30 +63,46 @@ const GamePage = () => {
       setPlayers(true)
     })
 
+    socket.on('not-ready',()=>{
+      setMessage("Prvo udjite u sobu i sačekajte da i drugi igrač uđe!");
+    })
+
    
-      socket.on('fire',fieldId=>{
-        let [_, fireRow,fireCol]= fieldId.split('_');
-        fireRow = Number(fireRow);
-        fireCol = Number(fireCol);
-        socket.emit('fire-reply', myBoard[fireRow][fireCol],roomName);
-        myBoard[fireRow][fireCol]='hit';
-        const newBoard = [...myBoard];
-        setMyBoard(newBoard); 
-        setTurn(!turn);
-      })
+    socket.on('fire',fieldId=>{
+      let [_, fireRow,fireCol]= fieldId.split('_');
+      fireRow = Number(fireRow);
+      fireCol = Number(fireCol);
+      socket.emit('fire-reply', myBoard[fireRow][fireCol],roomName);
+      myBoard[fireRow][fireCol]='hit';
+      const newBoard = [...myBoard];
+      setMyBoard(newBoard); 
+      setTurn(!turn);
+    })
   
     
-    socket.on('end',()=>{
-      if (message !== "Nazalost, izgubili ste. Vise srece drugi put!") {
-        setMessage('Jedan od igraca je napustio igru. Igra je gotova.');
-      }
-      setBlock(true);
-    })
+    // socket.on('end',()=>{
+  
+    //   setMessage('Jedan od igraca je napustio igru. Igra je gotova.');
+    //   setBlock(true);
+    // })
 
     socket.on('victory',()=>{
       setMessage("Nazalost, izgubili ste. Vise srece drugi put!");
       setBlock(true);
     })
+
+    socket.on('disconnect',(reason)=>{
+      if(reason === 'io server disconnect'){
+        setMessage('Jedan od igraca je napustio igru. Igra je gotova.');
+       
+      }else{
+        setMessage("Problem sa serverom")
+        
+      }
+      setBlock(true);
+      
+    })
+
 
     return () => {
       socket.off('connect');
@@ -100,15 +114,12 @@ const GamePage = () => {
   }, [roomName])
   
   const joinRoom = () => {
-    //setRoomName(roomName)
     socket.emit('join-room', roomName);
-    
   };
   
   const waitForProbaUpdate = () => {
     return new Promise((resolve) => {
       socket.on('fire-reply', (hits) => {
-        setProba(hits);
         resolve(hits); // Resolving the promise with the hits value
       });
     });
@@ -209,11 +220,11 @@ const GamePage = () => {
      if(hitFields.includes(fieldId)){
        setMessage("Vec ste gadjali ovo polje. Probajte opet.")
        //fires again
-       return
+       return;
      }
 
      setHitFields(h=>[...h, fieldId]);
-     let [, rowIndex, columnIndex] = fieldId.split('');
+     let [_, rowIndex, columnIndex] = fieldId.split('_');
      rowIndex = Number(rowIndex);
      columnIndex = Number(columnIndex);
      
@@ -230,9 +241,6 @@ const GamePage = () => {
        const ship = SHIPS.find(ship => ship.id === shipId);
        const shipLength = ship ? ship.shipLength : 0;
        setHitShips(h=>[...h,shipId]);
-       console.log(countOccurrences(hitShips, shipId));
-       console.log(hitShips);
-       console.log(shipLength - 1);
        if (countOccurrences(hitShips, shipId) === shipLength - 1) {
          setMessage(`Bravo! Oborili ste ceo ${shipId} brod!`);
 
@@ -241,9 +249,7 @@ const GamePage = () => {
            setMessage('POBEDILI STE');
           socket.emit('victory',roomName)
           setBlock(true);
-           //sends message to other player
-           //mozda promena u zeleno
-           //prekid igrice
+           
          }
 
        }
