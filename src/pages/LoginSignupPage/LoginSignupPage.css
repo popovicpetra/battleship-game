@@ -60,6 +60,7 @@ body {
   margin-top: 40px;
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
 .inputFields {
@@ -85,6 +86,11 @@ body {
   outline: none;
   color: black;
   font-size: 20px;
+}
+
+.incorrect {
+  border: 3px solid rgba(255, 102, 0, 1);
+  background-color: rgb(250, 221, 202);
 }
 
 .buttons {
@@ -134,4 +140,13 @@ body {
   margin: 0px auto;
   align-items: center;
   justify-content: center;
+}
+
+.msg {
+  color: black;
+}
+
+.globalMsg {
+  font-size: 16px;
+  color: white;
 }
