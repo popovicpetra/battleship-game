@@ -1,6 +1,15 @@
 .button {
-  width: 100px;
-  height: 30px;
-  background-color: blue;
-  color: white;
+  width: 150px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  color: rgba(255, 102, 0, 1);
+  border: none;
+  border-radius: 50px;
+  background-color: white;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
 }

@@ -6,7 +6,9 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
-    "express": "^4.19.2",
+    "axios": "^1.7.7",
+    "express": "^4.20.0",
+    "mongoose": "^8.6.1",
     "nodemon": "^3.1.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -22,7 +24,9 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "server:dev": "nodemon src/server.js",
-    "start": "concurrently \"npm run start:client\" \"npm run server:dev\""
+    "start": "concurrently \"npm run start:client\" \"npm run server:dev\"",
+    "server:devlog": "nodemon src/pages/LoginSignupPage/LogInServer/index.js",
+    "startlog": "concurrently \"npm run start:client\" \"npm run server:devlog\""
   },
   "eslintConfig": {
     "extends": [

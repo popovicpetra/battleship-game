@@ -1,0 +1,136 @@
+body {
+  height: 100%;
+  z-index: -2;
+  display: flex;
+  justify-content: center;
+  background-image: url(background.jpeg);
+
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  margin-top: 50px;
+  width: 600px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(
+    45deg,
+    rgba(48, 75, 90, 1) 0%,
+    rgba(255, 102, 0, 1) 100%
+  );
+  padding-bottom: 30px;
+}
+
+.image {
+  height: 30px;
+  width: 30px;
+  margin: 0px 30px;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  margin-top: 30px;
+}
+
+.title {
+  color: white;
+  font-size: 48px;
+  font-weight: 700;
+}
+
+.line {
+  width: 60px;
+  height: 6px;
+  background-color: white;
+  border-radius: 9px;
+}
+
+.fields {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+}
+
+.inputFields {
+  margin-bottom: 30px;
+}
+
+.field {
+  display: flex;
+  align-items: center;
+  margin: auto;
+  margin-bottom: 25px;
+  width: 480px;
+  height: 80px;
+  background: white;
+  border-radius: 6px;
+}
+
+.field input {
+  height: 50px;
+  width: 400px;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: black;
+  font-size: 20px;
+}
+
+.buttons {
+  display: flex;
+  gap: 30px;
+  margin: 20px auto;
+}
+
+.button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 480px;
+  height: 60px;
+  color: rgba(255, 102, 0, 1);
+  border: none;
+  border-radius: 50px;
+  background-color: white;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.changeButton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 220px;
+  height: 60px;
+  color: rgba(48, 75, 90, 1);
+  background-color: white;
+  border: 1px solid white;
+  border-radius: 50px;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.gray {
+  background-color: transparent;
+  color: white;
+}
+
+.submit-button {
+  display: flex;
+  gap: 30px;
+  margin: 0px auto;
+  align-items: center;
+  justify-content: center;
+}
