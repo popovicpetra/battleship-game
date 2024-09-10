@@ -1,18 +1,77 @@
+body {
+  height: 100vh;
+  width: 100vw;
+}
+
+.info {
+  position: fixed;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 350px;
+  padding: 30px;
+
+  background-color: white;
+}
+
+.info p {
+  font-size: 18px;
+}
+
 .gameInfo {
+  display: flex;
+  align-items: center;
+  margin: 0px;
+  height: 100vh;
+}
+
+.roomEntry {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  width: 400px;
+  height: 200px;
+  padding: 30px 50px;
+  gap: 15px;
+  background-color: white;
+  border-radius: 8px;
+}
+
+.roomEntry input {
+  height: 30px;
+  width: 200px;
+  padding-left: 10px;
+  background: transparent;
+  border: 1px solid gray;
+  outline: none;
+  color: black;
+  font-size: 20px;
+}
+
+.game {
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: end;
+}
+
+.disappear {
+  display: none;
 }
 
 .allBoardsContainer {
   display: flex;
+  justify-content: right;
+  margin-right: 30px;
 }
 
 .boardContainer {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 600px;
+  width: 700px;
 }
 .conn {
   display: inline-block;

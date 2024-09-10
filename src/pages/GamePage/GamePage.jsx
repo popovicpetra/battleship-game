@@ -43,10 +43,16 @@ const GamePage = () => {
   const [hitShips, setHitShips] = useState([]);
 
   const [message, setMessage] = useState('');
+  const [roomMessage, setRoomMessage] = useState('');
+  const [joinedRoom, setJoinedRoom] = useState(false);
 
   useEffect(() => {
     socket.on('room-full', () => {
-      setMessage('Ova soba je puna, ne mozete joj se pridruziti.');
+      setRoomMessage('Ova soba je puna, ne mozete joj se pridruziti.');
+    });
+
+    socket.on('joined-room', () => {
+      setJoinedRoom(true);
     });
 
     socket.on('connect', () => {
@@ -64,6 +70,7 @@ const GamePage = () => {
           return;
         }
       }
+      setMessage('');
       setPlayers(true);
     });
 
@@ -266,54 +273,65 @@ const GamePage = () => {
   return (
     <>
       <div className={styles.gameInfo}>
-        <h3>Unesite ime sobe: </h3>
-        <input value={roomName} onChange={(e) => setRoomName(e.target.value)} />
-        <Button text={'Uđi u sobu'} fun={joinRoom} />
-        <p>
-          Turn:{' '}
-          <span id="turn-display">
-            {players
-              ? turn
-                ? 'Vi ste na redu'
-                : 'Protivnik je na redu'
-              : 'Pre nego sto gadjate, sacekajte  da svi igraci budu spremni'}
-          </span>
-        </p>
-        <p>
-          Info: <span id="info"></span>
-        </p>
-        <p>Message: {message}</p>
-        <PlayersInfo
-          socket={socket}
-          allShipsPlaced={hasGameStarted}
-          roomName={roomName}
-        />
-      </div>
-
-      <div className={styles.allBoardsContainer}>
-        <div className={styles.boardContainer}>
-          <MyGameboard
-            handleDragOver={handleDragOver}
-            handleOnDrop={handleOnDrop}
-            myBoard={myBoard}
-            setMyBoard={setMyBoard}
-            hasGameStarted={hasGameStarted}
-          ></MyGameboard>
-          {!hasGameStarted && (
-            <ShipsOptions
-              isHorizontal={isHorizontal}
-              setIsHorizontal={setIsHorizontal}
-              availableShips={availableShips}
-              handleOnDrag={handleOnDrag}
-            ></ShipsOptions>
-          )}
+        <div className={joinedRoom ? styles.disappear : styles.roomEntry}>
+          <h3>Unesite ime sobe: </h3>
+          <input
+            value={roomName}
+            onChange={(e) => setRoomName(e.target.value)}
+          />
+          {roomMessage}
+          <Button text={'Uđi u sobu'} fun={joinRoom} />
         </div>
-        <div className={styles.boardContainer}>
-          <EnemyGameboard
-            enemyBoard={enemyBoard}
-            hasGameStarted={hasGameStarted}
-            handleFieldClick={handleFieldClick}
-          ></EnemyGameboard>
+
+        <div className={joinedRoom ? styles.game : styles.disappear}>
+          <div className={styles.info}>
+            <PlayersInfo
+              socket={socket}
+              allShipsPlaced={hasGameStarted}
+              roomName={roomName}
+            />
+
+            <p>
+              <b>Message:</b> {message}
+            </p>
+            <p>
+              <b>Turn:</b>{' '}
+              <span id="turn-display">
+                {players
+                  ? turn
+                    ? 'Vi ste na redu'
+                    : 'Protivnik je na redu'
+                  : 'Pre nego sto gadjate, sacekajte  da svi igraci budu spremni'}
+              </span>
+            </p>
+          </div>
+
+          <div className={styles.allBoardsContainer}>
+            <div className={styles.boardContainer}>
+              <MyGameboard
+                handleDragOver={handleDragOver}
+                handleOnDrop={handleOnDrop}
+                myBoard={myBoard}
+                setMyBoard={setMyBoard}
+                hasGameStarted={hasGameStarted}
+              ></MyGameboard>
+              {!hasGameStarted && (
+                <ShipsOptions
+                  isHorizontal={isHorizontal}
+                  setIsHorizontal={setIsHorizontal}
+                  availableShips={availableShips}
+                  handleOnDrag={handleOnDrag}
+                ></ShipsOptions>
+              )}
+            </div>
+            <div className={styles.boardContainer}>
+              <EnemyGameboard
+                enemyBoard={enemyBoard}
+                hasGameStarted={hasGameStarted}
+                handleFieldClick={handleFieldClick}
+              ></EnemyGameboard>
+            </div>
+          </div>
         </div>
       </div>
     </>

@@ -1,7 +1,7 @@
 .board {
-  background-color: yellow;
-  width: 200px;
-  height: 200px;
+  background-color: rgba(48, 75, 90, 1);
+  width: 400px;
+  height: 400px;
   display: grid;
   grid-template: repeat(10, 1fr) / repeat(10, 1fr);
 }
