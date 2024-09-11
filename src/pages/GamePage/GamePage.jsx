@@ -294,16 +294,20 @@ const GamePage = () => {
             <p>
               <b>Message:</b> {message}
             </p>
-            <p>
-              <b>Turn:</b>{' '}
-              <span id="turn-display">
-                {players
-                  ? turn
-                    ? 'Vi ste na redu'
-                    : 'Protivnik je na redu'
-                  : 'Pre nego sto gadjate, sacekajte  da svi igraci budu spremni'}
-              </span>
-            </p>
+            {!block ? (
+              <p>
+                <b>Turn:</b>{' '}
+                <span id="turn-display">
+                  {players
+                    ? turn
+                      ? 'Vi ste na redu'
+                      : 'Protivnik je na redu'
+                    : 'Pre nego sto gadjate, sacekajte  da svi igraci budu spremni'}
+                </span>
+              </p>
+            ) : (
+              ''
+            )}
           </div>
 
           <div className={styles.allBoardsContainer}>

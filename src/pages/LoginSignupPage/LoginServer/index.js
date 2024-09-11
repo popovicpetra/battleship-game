@@ -7,8 +7,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-const signedInUsers = [];
-let logged = false;
+//const signedInUsers = [];
 
 //mongoose.connect('mongodb+srv://emilijasimic2002:emaema@cluster0.4yvw1.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
 mongoose
@@ -35,21 +34,19 @@ app.post('/register', (req, res) => {
 app.post('/login', (req, res) => {
   const { user, password } = req.body;
 
-  signedInUsers.forEach((element) => {
-    if (element.user == user) {
-      console.log('korisnik je vec ulogovan');
-      res.send('Ovaj korisnik je vec ulogovan');
-      logged = true;
-    }
-  });
-
-  if (logged) return;
+  // signedInUsers.forEach((element) => {
+  //   if (element.user == user) {
+  //     console.log('korisnik je vec ulogovan');
+  //     res.send('Ovaj korisnik je vec ulogovan');
+  //     logged = true;
+  //   }
+  // });
 
   SignedModel.findOne({ user, password })
     .then((signed) => {
       if (signed) {
         res.json(signed); // User found, credentials are correct
-        signedInUsers.push({ user, password });
+        //signedInUsers.push({ user, password });
       } else {
         res.status(401).json({ message: 'Invalid credentials' }); // User not found
       }

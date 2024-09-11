@@ -60,7 +60,7 @@ const LoginSignupPage = () => {
 
       // Sign up logic: add new user to the database
       axios
-        .post('http://localhost:3001/register', { user, email, password })
+        .post('http://localhost:5000/register', { user, email, password })
         .then((result) => {
           if (result.data == 'Korisnicko ime zauzeto') {
             setMsg(result.data);
@@ -81,7 +81,7 @@ const LoginSignupPage = () => {
       }
 
       axios
-        .post('http://localhost:3001/login', { user, password })
+        .post('http://localhost:5000/login', { user, password })
         .then((result) => {
           if (result.data) {
             if (result.data == 'Ovaj korisnik je vec ulogovan') {
