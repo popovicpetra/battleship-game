@@ -23,7 +23,7 @@ server.listen(5000, () => {
 const rooms = {};
 
 io.on('connection', (socket) => {
-  let victory = false;
+  // let victory = false;
   let start = false;
   socket.on('join-room', (roomName) => {
     console.log('Client joining room:', roomName);
@@ -63,11 +63,11 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', () => {
     const roomName = socket.data.roomName;
-    if (victory) {
-      // Ako je već emitovana pobeda, ne emituje 'end'
-      console.log(`Pobeda već emitovana u sobi ${roomName}.`);
-      return;
-    }
+    // if (victory) {
+    //   // Ako je već emitovana pobeda, ne emituje 'end'
+    //   console.log(`Pobeda već emitovana u sobi ${roomName}.`);
+    //   return;
+    // }
     //io.to(roomName).emit('end');
     // io.socketsLeave(roomName);
     io.in(roomName).disconnectSockets(true);
@@ -99,10 +99,10 @@ io.on('connection', (socket) => {
   });
 
   socket.on('victory', (roomName) => {
-    victory = true;
+    // victory = true;
     socket.to(roomName).emit('victory');
     //io.socketsLeave(roomName);
-    io.in(roomName).disconnectSockets(true);
+    //io.in(roomName).disconnectSockets(true);
     delete rooms[roomName];
     console.log(rooms);
   });

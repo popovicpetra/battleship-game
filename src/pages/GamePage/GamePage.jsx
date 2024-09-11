@@ -172,7 +172,7 @@ const GamePage = () => {
   };
 
   const addShipToTheBoard = (ship, shipLength, startBlockId) => {
-    let [_, rowNum, columnNum] = startBlockId.split('_');
+    let [_, rowNum, columnNum] = startBlockId.split('_'); //cell_0_0
     rowNum = Number(rowNum);
     columnNum = Number(columnNum);
     const newBoard = [...myBoard];

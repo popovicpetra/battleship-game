@@ -1,0 +1,49 @@
+.ship {
+  height: 40px;
+}
+
+.destroyer {
+  width: 80px;
+}
+
+.submarine {
+  width: 120px;
+}
+
+.cruiser {
+  width: 120px;
+}
+
+.battleship {
+  width: 160px;
+}
+
+.carrier {
+  width: 200px;
+}
+
+@media (max-width: 1500px) {
+  .ship {
+    height: 30px;
+  }
+
+  .destroyer {
+    width: 60px;
+  }
+
+  .submarine {
+    width: 90px;
+  }
+
+  .cruiser {
+    width: 90px;
+  }
+
+  .battleship {
+    width: 120px;
+  }
+
+  .carrier {
+    width: 150px;
+  }
+}
