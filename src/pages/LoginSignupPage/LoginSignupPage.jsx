@@ -11,6 +11,7 @@ const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/; //f
 const EMAIL_REGEX =
   /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
+let logged = false;
 const LoginSignupPage = () => {
   const [page, setPage] = useState('Log in');
   const [user, setUser] = useState('');
@@ -61,6 +62,11 @@ const LoginSignupPage = () => {
       axios
         .post('http://localhost:3001/register', { user, email, password })
         .then((result) => {
+          if (result.data == 'Korisnicko ime zauzeto') {
+            setMsg(result.data);
+            return;
+          }
+
           console.log('User registered:', result);
           setMsg('Uspesno ste se registrovali!');
           // Handle successful registration (e.g., show a success message or redirect)
@@ -78,9 +84,14 @@ const LoginSignupPage = () => {
         .post('http://localhost:3001/login', { user, password })
         .then((result) => {
           if (result.data) {
+            if (result.data == 'Ovaj korisnik je vec ulogovan') {
+              setMsg(result.data);
+              return;
+            }
             console.log('User logged in:', result);
             // Handle successful login (e.g., store token, redirect)
             setSubmit(true);
+            logged = true;
           } else {
             console.log('User is not logged in');
 
@@ -178,4 +189,4 @@ const LoginSignupPage = () => {
   );
 };
 
-export default LoginSignupPage;
+export { LoginSignupPage as default, logged };
