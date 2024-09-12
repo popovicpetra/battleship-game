@@ -12,6 +12,8 @@ const EMAIL_REGEX =
   /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 let logged = false;
+let playerUsername;
+
 const LoginSignupPage = () => {
   const [page, setPage] = useState('Log in');
   const [user, setUser] = useState('');
@@ -92,6 +94,7 @@ const LoginSignupPage = () => {
             // Handle successful login (e.g., store token, redirect)
             setSubmit(true);
             logged = true;
+            playerUsername = user;
           } else {
             console.log('User is not logged in');
 
@@ -189,4 +192,4 @@ const LoginSignupPage = () => {
   );
 };
 
-export { LoginSignupPage as default, logged };
+export { LoginSignupPage as default, logged, playerUsername };

@@ -17,6 +17,8 @@ import io from 'socket.io-client';
 import PlayersInfo from '../../components/PlayersInfo/PlayersInfo';
 import Button from '../../components/Button/Button';
 
+import { playerUsername } from '../LoginSignupPage/LoginSignupPage';
+
 const socket = io('http://localhost:5000');
 
 const GamePage = () => {
@@ -239,6 +241,7 @@ const GamePage = () => {
     //console.log(proba)
     //doesFieldHaveShip(enemyBoard,rowIndex,columnIndex)
     const hits = await waitForProbaUpdate();
+
     if (hits !== null) {
       const shipId = hits;
       const ship = SHIPS.find((ship) => ship.id === shipId);
@@ -285,6 +288,7 @@ const GamePage = () => {
 
         <div className={joinedRoom ? styles.game : styles.disappear}>
           <div className={styles.info}>
+            <h3>{playerUsername}</h3>
             <PlayersInfo
               socket={socket}
               allShipsPlaced={hasGameStarted}

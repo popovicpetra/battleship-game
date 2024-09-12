@@ -128,12 +128,13 @@ process.on('uncaughtException', (err) => {
 //Database manipulating
 app.post('/register', (req, res) => {
   const { user, _ } = req.body;
+  const newUser = { ...req.body, wins: 0, loses: 0 };
 
   SignedModel.findOne({ user }).then((signed) => {
     if (signed) {
       res.send('Korisnicko ime zauzeto');
     } else {
-      SignedModel.create(req.body)
+      SignedModel.create(newUser)
         .then((signed) => res.json(signed))
         .catch((err) => res.json(err));
     }
