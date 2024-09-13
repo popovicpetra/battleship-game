@@ -18,9 +18,17 @@ mongoose
   .catch((err) => console.log('MongoDB connection error:', err));
 
 app.post('/register', (req, res) => {
-  SignedModel.create(req.body)
-    .then((signed) => res.json(signed))
-    .catch((err) => res.json(err));
+  const { user, _ } = req.body;
+
+  SignedModel.findOne({ user }).then((signed) => {
+    if (signed) {
+      res.send('Korisnicko ime zauzeto');
+    } else {
+      SignedModel.create(req.body)
+        .then((signed) => res.json(signed))
+        .catch((err) => res.json(err));
+    }
+  });
 });
 
 app.post('/login', (req, res) => {
@@ -29,7 +37,8 @@ app.post('/login', (req, res) => {
   // signedInUsers.forEach((element) => {
   //   if (element.user == user) {
   //     console.log('korisnik je vec ulogovan');
-  //     res.status(401).json({ message: 'User logged already' });
+  //     res.send('Ovaj korisnik je vec ulogovan');
+  //     logged = true;
   //   }
   // });
 

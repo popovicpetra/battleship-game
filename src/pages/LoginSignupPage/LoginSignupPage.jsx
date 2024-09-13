@@ -6,10 +6,13 @@ import passwordImg from '../../assets/password.png';
 import axios from 'axios';
 import { Navigate } from 'react-router-dom';
 
-const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
-const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
+const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/; //from 4 to 24 char
+const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/; //form 8 to 24 char, one upper, one lower, one digit, one special char
 const EMAIL_REGEX =
   /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+let logged = false;
+let playerUsername;
 
 const LoginSignupPage = () => {
   const [page, setPage] = useState('Log in');
@@ -22,7 +25,10 @@ const LoginSignupPage = () => {
   const [validEmail, setValidEmail] = useState(false);
   const [validPwd, setValidPwd] = useState(false);
 
-  let msg = '';
+  const [msgUser, setMsgUser] = useState('');
+  const [msgEmail, setMsgEmail] = useState('');
+  const [msgPwd, setMsgPwd] = useState('');
+  const [msg, setMsg] = useState('');
 
   useEffect(() => {
     setValidUser(USER_REGEX.test(user));
@@ -38,17 +44,33 @@ const LoginSignupPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    validUser
+      ? setMsgUser('')
+      : setMsgUser('Ime treba imati izmedju 4 i 24 karaktera');
+    validEmail ? setMsgEmail('') : setMsgEmail('Los unos email adrese');
+    validPwd
+      ? setMsgPwd('')
+      : setMsgPwd(
+          'Najmanje 1 malo slovo, 1 veliko slovo, 1 cifra i 1 specijalan karakter'
+        );
 
     if (page === 'Sign up') {
       if (!validUser || !validEmail || !validPwd) {
-        msg = 'Los unos parametara';
+        console.log('Los unos parametara');
+        return;
       }
 
       // Sign up logic: add new user to the database
       axios
-        .post('http://localhost:3001/register', { user, email, password })
+        .post('http://localhost:5000/register', { user, email, password })
         .then((result) => {
+          if (result.data == 'Korisnicko ime zauzeto') {
+            setMsg(result.data);
+            return;
+          }
+
           console.log('User registered:', result);
+          setMsg('Uspesno ste se registrovali!');
           // Handle successful registration (e.g., show a success message or redirect)
         })
         .catch((err) => console.log('Registration error:', err));
@@ -56,22 +78,33 @@ const LoginSignupPage = () => {
       // Log in logic: check if the user exists in the database
 
       if (!validUser || !validPwd) {
-        msg = 'Los unos parametara';
+        console.log('Los unos parametara');
+        return;
       }
 
       axios
-        .post('http://localhost:3001/login', { user, password })
+        .post('http://localhost:5000/login', { user, password })
         .then((result) => {
           if (result.data) {
+            if (result.data == 'Ovaj korisnik je vec ulogovan') {
+              setMsg(result.data);
+              return;
+            }
             console.log('User logged in:', result);
             // Handle successful login (e.g., store token, redirect)
             setSubmit(true);
+            logged = true;
+            playerUsername = user;
           } else {
             console.log('User is not logged in');
+
             // Handle invalid login (e.g., show an error message)
           }
         })
-        .catch((err) => console.log('Login error:', err));
+        .catch((err) => {
+          console.log('Login error:', err);
+          setMsg('Los unos parametara');
+        });
     }
   };
 
@@ -84,10 +117,11 @@ const LoginSignupPage = () => {
           <p className="title">{page}</p>
           <div className="line"></div>
         </div>
-        <p>{msg}</p>
+
         <form className="fields" onSubmit={handleSubmit}>
           <div className="inputFields">
-            <div className="field">
+            <p className="msg">{msgUser}</p>
+            <div className={!msgUser ? 'field' : 'field incorrect'}>
               <img src={userImg} alt="user_name" className="image" />
               <input
                 type="text"
@@ -98,16 +132,20 @@ const LoginSignupPage = () => {
             {page === 'Log in' ? (
               <div></div>
             ) : (
-              <div className="field">
-                <img src={emailImg} alt="e_mail" className="image" />
-                <input
-                  type="email"
-                  placeholder="Email"
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
+              <>
+                <p className="msg">{msgEmail}</p>
+                <div className={!msgEmail ? 'field' : 'field incorrect'}>
+                  <img src={emailImg} alt="e_mail" className="image" />
+                  <input
+                    type="email"
+                    placeholder="Email"
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </div>
+              </>
             )}
-            <div className="field">
+            <p className="msg">{msgPwd}</p>
+            <div className={!msgPwd ? 'field' : 'field incorrect'}>
               <img src={passwordImg} alt="password" className="image" />
               <input
                 type="password"
@@ -115,6 +153,8 @@ const LoginSignupPage = () => {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
+
+            <p className="globalMsg">{msg}</p>
 
             <div className="submit-button">
               <button type="submit" className="button">
@@ -152,4 +192,4 @@ const LoginSignupPage = () => {
   );
 };
 
-export default LoginSignupPage;
+export { LoginSignupPage as default, logged, playerUsername };

@@ -38,7 +38,7 @@ const ShipsOptions = ({
           ></Ship>
         ))}
       </div>
-      <Button text={'FLIP'} fun={flipShips}></Button>
+      <Button text={'Okreni'} fun={flipShips}></Button>
     </div>
   );
 };
