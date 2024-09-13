@@ -4,6 +4,10 @@ const http = require('http');
 const { Server } = require('socket.io');
 const path = require('path');
 
+const dotenv = require('dotenv');
+dotenv.config();
+const port = process.env.PORT;
+
 //Database
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -29,8 +33,8 @@ const io = new Server(server, {
   },
 });
 
-server.listen(5000, () => {
-  console.log('Server listening on port 5000');
+server.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
 });
 
 const rooms = {};
